@@ -15,4 +15,44 @@ router.post('/' , (req , res , next) => {
 });
 
 
+router.get('/:orderId' , (req , res , next) => {
+    const id = req.params.orderId;
+
+
+    if (id === '12345') {
+        res.status(200).json ({
+            message:'you discoverd th 12345 ID',
+            id : id
+        });
+    }else{
+        // productID 가 special 아닐때
+        res.status(200).json ({
+            message:'you passed  ID'
+
+        });
+    }
+});
+
+
+router.patch('/:orderId' , (req , res , next) => {
+
+    res.status(200).json ({
+        message:'update order'
+    });
+
+});
+
+
+
+
+router.delete('/:orderId' , (req , res , next) => {
+
+    res.status(200).json ({
+        message:'delete order'
+    });
+
+});
+
+
+
 module.exports = router;
