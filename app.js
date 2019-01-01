@@ -11,7 +11,7 @@ const mongoose = require('mongoose');
 mongoose.connect(
 
     //"mongodb://kyuseong:" + process.env.mlab_PW + "@ds145694.mlab.com:45694/noderest-shop",
-    "mongodb://id:pw@ds145694.mlab.com:45694/noderest-shop",
+    "mongodb://kyuseong:ks3220930@ds145694.mlab.com:45694/noderest-shop",
     {
         useNewUrlParser:true
     }
