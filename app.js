@@ -9,9 +9,29 @@ const mongoose = require('mongoose');
 //
 // );
 
+    // mongoose.connect(
+    //     "mongodb://kyuseong:" + process.env.mlab_PW + "@ds145694.mlab.com:45694/noderest-shop",
+    //     {
+    //         useNewUrlParser:true
+    //     }
+    //
+    //
+    // );
+
+mongoose.connect(
+    "mongodb://kyuseong:ks3220930@ds145694.mlab.com:45694/noderest-shop",
+    {
+        useNewUrlParser:true
+    }
+
+
+);
+    //mongoose.Promise = global.promise;
+
+
+
 // app 변수에 위에서 지정된 express()    app가 express기능을 사용할수있음
 const app = express();
-
 
 const morgan = require('morgan');
 const bodyparser = require('body-parser');
@@ -55,7 +75,7 @@ app.use(bodyparser.json());
 
 
 
-// app가  작동을 핧수있도록 써줘야하는 줄
+// app가  작동을 핧수있도록 써줘야하는 라인
 module.exports = app;
 
 
