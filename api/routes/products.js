@@ -10,9 +10,41 @@ const Product = require('../models/product');
 
 // 라우터.get  값을 우리가 보고싶을때 가져와야할때
 router.get('/' , (req , res , next) => {
-    res.status(200).json({
-        message:'handung Get requests to /products'
-    });
+
+
+
+    Product.find()
+    .select('name price _id')
+    .exec()
+        .then( docs => {
+
+            res.status(200).json(docs);
+
+             const asd = {
+                 count : docs.length,  //데이타 갯수
+                 products: docs.map(doc =>{
+                    return{
+                        name:doc.name,
+                        price:doc.price,
+                        _id:doc._id
+                    }
+                })
+             }
+
+
+        })
+        .catch( err =>{
+            console.log(err);
+            res.status(500).json({
+                error:err
+            });
+        });
+
+    // console.log(asd);
+
+    // res.status(200).json(asd);
+
+
 });
 
 
@@ -26,9 +58,6 @@ router.post('/' , (req , res , next) => {
     //     name: req.body.name,
     //     price: req.body.price
     // };
-
-
-
 
     // mongoose db 사용부분 하지만 지금 주석풀고 실행하면 에러발생으로 주석했습니다
     const product = new Product({
@@ -59,15 +88,6 @@ router.post('/' , (req , res , next) => {
             });
     });
 
-
-
-    // res.status(200).json({
-    //     message:'handung post requests to /products',
-    //
-    //     //위에서 파싱한 product를 생성하는부분? createdstatus 정확한역활 찾아봐야함
-    //     createdstatus : product
-    // });
-
 });
 
 
@@ -96,10 +116,34 @@ router.get('/:productId' , (req , res , next) => {
 
 // patch productId의 변경이 필요한경우
 router.patch('/:productId' , (req , res , next) => {
+    const id = req.params.productId;
+    const updateOps = {};
+    for (const ops of req.body){
+        updateOps[ops.propName] = ops.value;
+    }
 
-        res.status(200).json ({
-            message:'update prodoct'
+    Product.update({_id:id} , {$set:updateOps})
+        .exec()
+        .then( result=>{
+            res.status(200).json({
+                message: "product updated",
+                request: {
+                    type:"GET",
+                    url: "http://localhost:3000/products/" + id
+                }
+            })
+
+        })
+        .catch( err=>{
+            console.log(err);
+            res.status(500).json({
+                error:err
+            });
         });
+
+        // res.status(200).json ({
+        //     message:'update prodoct'
+        // });
 
 });
 
@@ -108,10 +152,31 @@ router.patch('/:productId' , (req , res , next) => {
 // patch productId의 삭제가 필요한경우
 router.delete('/:productId' , (req , res , next) => {
 
-    res.status(200).json ({
-        message:'delete prodoct'
-    });
+    // res.status(200).json ({
+    //     message:'delete prodoct'
+    // });
+    const id = req.params.productId;
+    Product.remove({_id: id})
+        .exec()
+        .then( result =>{
+            res.status(200).json({
+                message: "product deleted",
+                request: {
+                    type:"post",
+                    url: "http://localhost:3000/products/" + id,
+                    body:{name:"String" , price:"Number"}
+                }
+            });
 
+
+        })
+
+        .catch(  err => {
+            console.log(err);
+            res.status(500).json({
+                error:err
+            });
+        });
 });
 
 
