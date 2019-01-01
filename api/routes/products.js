@@ -2,6 +2,7 @@
 const express = require('express');
 // router가 express 기능을 함?
 const router = express.Router();
+const mongoose = require('mongoose')
 const Product = require('../models/product');
 
 
@@ -25,6 +26,16 @@ router.post('/' , (req , res , next) => {
         name: req.body.name,
         price: req.body.price
     };
+
+
+    // mongoose db 사용부분 하지만 지금 주석풀고 실행하면 에러발생으로 주석했습니다
+    // const product = new Product({
+    //     _id: new mongoose.Types.ObjectID(),
+    //     name:req.body.name,
+    //     price:req.body.price
+    // });
+
+
 
     res.status(200).json({
         message:'handung post requests to /products',

@@ -1,5 +1,4 @@
 
-
 // express 변수에 express 프레임워크 라이브러리를 지정  변수 express가 프레임워크 라이브러리 express 기능을 할수있도록 됩니다.
 const express  = require('express');
 const mongoose = require('mongoose');
@@ -9,16 +8,9 @@ const mongoose = require('mongoose');
 //
 // );
 
-    // mongoose.connect(
-    //     "mongodb://kyuseong:" + process.env.mlab_PW + "@ds145694.mlab.com:45694/noderest-shop",
-    //     {
-    //         useNewUrlParser:true
-    //     }
-    //
-    //
-    // );
-
 mongoose.connect(
+
+    //"mongodb://kyuseong:" + process.env.mlab_PW + "@ds145694.mlab.com:45694/noderest-shop",
     "mongodb://kyuseong:ks3220930@ds145694.mlab.com:45694/noderest-shop",
     {
         useNewUrlParser:true
