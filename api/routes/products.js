@@ -22,27 +22,51 @@ router.get('/' , (req , res , next) => {
 router.post('/' , (req , res , next) => {
 
     //post할때 값을 읽어오는 부분  body의 name을 req해와서 name에 지정?  price도 같음 그걸 product에 지정
-    const product  = {
-        name: req.body.name,
-        price: req.body.price
-    };
+    // const product  = {
+    //     name: req.body.name,
+    //     price: req.body.price
+    // };
+
+
 
 
     // mongoose db 사용부분 하지만 지금 주석풀고 실행하면 에러발생으로 주석했습니다
-    // const product = new Product({
-    //     _id: new mongoose.Types.ObjectID(),
-    //     name:req.body.name,
-    //     price:req.body.price
-    // });
+    const product = new Product({
+        _id: new mongoose.Types.ObjectId(),
+        name:req.body.name,
+        price:req.body.price
+     });
 
+    product
+        .save()
+        .then(result => {
+            console.log(result);
+            res.status(201).json({
+                message:"Created product successfully",
+                createdProduct:{
+                    name:result.name,
+                    price:result.price,
+                    _id:result._id
+                }
+            });
 
+        })
 
-    res.status(200).json({
-        message:'handung post requests to /products',
-
-        //위에서 파싱한 product를 생성하는부분? createdstatus 정확한역활 찾아봐야함
-        createdstatus : product
+        .catch(  err => {
+            console.log(err);
+            res.status(500).json({
+                error:err
+            });
     });
+
+
+
+    // res.status(200).json({
+    //     message:'handung post requests to /products',
+    //
+    //     //위에서 파싱한 product를 생성하는부분? createdstatus 정확한역활 찾아봐야함
+    //     createdstatus : product
+    // });
 
 });
 
