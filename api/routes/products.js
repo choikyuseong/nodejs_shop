@@ -2,9 +2,38 @@
 const express = require('express');
 // router가 express 기능을 함?
 const router = express.Router();
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const multer = require('multer');
 const Product = require('../models/product');
 
+
+
+const storage = multer.diskStorage({ destination : function (req , file , cd) {
+        cd(null , './uploads/');
+
+    },
+    filename: function (req , file , cd) {
+        cd(null , new Date().toISOString() + file.originalname);
+
+    }
+});
+
+const fileFilter = (req, file, cb) => {
+    // reject a file
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+        cb(null, true);
+    } else {
+        cb(null, false);
+    }
+};
+
+const upload = multer({
+    storage : storage,
+    limits : {
+        filesize: 1024 * 1024 * 5
+    },
+    filefilter: fileFilter
+});
 
 
 
@@ -14,7 +43,7 @@ router.get('/' , (req , res , next) => {
 
 
     Product.find()
-    .select('name price _id')
+    .select('name price _id productImage')
     .exec()
         .then( docs => {
 
@@ -26,6 +55,7 @@ router.get('/' , (req , res , next) => {
                     return{
                         name:doc.name,
                         price:doc.price,
+                        productImage:doc.productImage,
                         _id:doc._id
                     }
                 })
@@ -51,7 +81,7 @@ router.get('/' , (req , res , next) => {
 
 
 // 값을 우리가 보낼때 요청전문을 보낼때 정도?
-router.post('/' , (req , res , next) => {
+router.post('/' ,upload.single('productImage'), (req , res , next) => {
 
     //post할때 값을 읽어오는 부분  body의 name을 req해와서 name에 지정?  price도 같음 그걸 product에 지정
     // const product  = {
@@ -63,7 +93,8 @@ router.post('/' , (req , res , next) => {
     const product = new Product({
         _id: new mongoose.Types.ObjectId(),
         name:req.body.name,
-        price:req.body.price
+        price:req.body.price,
+        productImage:req.file.path
      });
 
     product
@@ -75,7 +106,12 @@ router.post('/' , (req , res , next) => {
                 createdProduct:{
                     name:result.name,
                     price:result.price,
-                    _id:result._id
+                    productImage:result.productImage,
+                    _id:result._id,
+                    result: {
+                        type: 'GET',
+                        url: 'http://localhost:3000/products/'+result._id
+                    }
                 }
             });
 
@@ -96,21 +132,49 @@ router.post('/' , (req , res , next) => {
 router.get('/:productId' , (req , res , next) => {
     const id = req.params.productId;
 
-
-    if (id === 'special') {
-        // productID 가 special 일때
-        // =이 3개 : 타입까지 동일
-        res.status(200).json ({
-            message:'you discoverd th special ID',
-            id : id
+    Product.findById(id)
+        .select('name price _id productImage')
+        .exec()
+        .then( doc =>{
+            console.log("From database" , doc);
+            if (doc){
+                res.status(200).json({
+                    product : doc,
+                    request: {
+                        type:"GET",
+                        url: "http://localhost:3000/products"
+                    }
+                });
+            }else{
+                res.status(404).json({
+                    message:"No vaild entry found for provide ID"
+                });
+            }
+        })
+        .catch( err=>{
+            console.log(err);
+            res.status(500).json({
+                error:err
+            });
         });
-    }else{
-        // productID 가 special 아닐때
-        res.status(200).json ({
-            message:'you passed  ID'
 
-        });
-    }
+
+    // if (id === 'special') {
+    //     // productID 가 special 일때
+    //     // =이 3개 : 타입까지 동일
+    //     res.status(200).json ({
+    //         message:'you discoverd th special ID',
+    //         id : id
+    //     });
+    // }else{
+    //     // productID 가 special 아닐때
+    //     res.status(200).json ({
+    //         message:'you passed  ID'
+    //
+    //     });
+    // }
+
+
 });
 
 

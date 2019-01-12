@@ -8,17 +8,13 @@ const mongoose = require('mongoose');
 //
 // );
 
-mongoose.connect(
-
-    //"mongodb://kyuseong:" + process.env.mlab_PW + "@ds145694.mlab.com:45694/noderest-shop",
-    "mongodb://kyuseong:ks3220930@ds145694.mlab.com:45694/noderest-shop",
-    {
-        useNewUrlParser:true
-    }
+mongoose.connect("mongodb://kyuseong:ks3220930@ds145694.mlab.com:45694/noderest-shop",
+    { useNewUrlParser:true })
+    .then(() => console.log("mongdb connect"))
+    .catch( err => console.log(err));
 
 
-);
-    //mongoose.Promise = global.promise;
+//mongoose.Promise = global.promise;
 
 
 
@@ -49,11 +45,11 @@ const bodyparser = require('body-parser');
 //         }
 //     })
 // });
-
+mongoose.set('useCreateIndex',true);
 app.use(morgan('dev'));
 app.use(bodyparser.urlencoded({extended: false}));
 app.use(bodyparser.json());
-
+app.use('/uploads' , express.static('uploads'));
 // app.use( (req,res ,next) => {
 //     res.header('Access-Control-Allow-Origin' , '*');
 //     res.header('Access-Control-Allow-Headers,Origin,X-Requested-with,Content_Type , Accept , Authorization');
@@ -68,16 +64,16 @@ app.use(bodyparser.json());
 
 
 // app가  작동을 핧수있도록 써줘야하는 라인
-module.exports = app;
 
 
-//각각 products.js 와 order.js 를 불러와 변수에 넣어줍니다
+//각각 products.js 와 orders.js 를 불러와 변수에 넣어줍니다
 const productRoutes = require('./api/routes/products');
-const orderRoutes = require('./api/routes/order');
-
+const orderRoutes = require('./api/routes/orders');
+const userRoutes = require('./api/routes/users');
 
 // app가 두개의 경로를  사용하겠다 선언
 app.use( '/products' , productRoutes);
-app.use( '/order' , orderRoutes);
+app.use( '/orders' , orderRoutes);
+app.use( '/users' , userRoutes);
 
-
+module.exports = app;
